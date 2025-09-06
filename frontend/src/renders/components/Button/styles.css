@@ -1,0 +1,17 @@
+.calculator-button {
+  padding: 20px;
+  font-size: 1.5em;
+  border: none;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.calculator-button:hover {
+  background-color: #d1d1d1;
+}
+
+.zero-button {
+  grid-column: span 2;
+}
