@@ -1,22 +1,33 @@
+
 .display-container {
-  background-color: #222;
-  color: white;
-  padding: 20px;
+  background-color: #f2f2f2;
+  color: #333;
+  padding: 40px 20px 20px;
   text-align: right;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .display-expression {
-  font-size: 1em;
-  color: #ccc;
+  font-size: 1.2em;
+  font-weight: 300;
+  color: #aaa;
   font-family: 'Arial', sans-serif;
   min-height: 20px;
 }
 
 .display-value {
-  font-size: 2.5em;
+  font-size: 3.5em;
+  font-weight: 400;
   font-family: 'Arial', sans-serif;
-  overflow-x: auto;
-  white-space: nowrap;
+}
+
+.display-error {
+  font-size: 1.5em;
+  color: #d9534f;
+  text-align: right;
+  font-weight: bold;
+  padding: 20px;
 }

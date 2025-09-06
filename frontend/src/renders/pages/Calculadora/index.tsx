@@ -1,121 +1,47 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
+import { calculatorReducer, initialState } from './calculator.state';
+
 import Display from '../../components/Display';
 import Button from '../../components/Button';
 import './styles.css';
 
 const Calculadora: React.FC = () => {
-  const [displayValue, setDisplayValue] = useState<string>('0');
-  const [expression, setExpression] = useState<string>('');
-  const [operator, setOperator] = useState<string | null>(null);
-  const [firstOperand, setFirstOperand] = useState<number | null>(null);
-  const [waitingForSecondOperand, setWaitingForSecondOperand] = useState<boolean>(false);
-  
-  // Novo estado para rastrear se um cálculo foi finalizado
-  const [isResult, setIsResult] = useState<boolean>(false);
+  const [state, dispatch] = useReducer(calculatorReducer, initialState);
+  const { displayValue, expression, errorMessage } = state;
 
-  const handleClear = () => {
-    setDisplayValue('0');
-    setExpression('');
-    setOperator(null);
-    setFirstOperand(null);
-    setWaitingForSecondOperand(false);
-    setIsResult(false);
-  };
-
-  const handleDigit = (digit: string) => {
-    // Se um resultado foi obtido, limpa a expressão para um novo cálculo
-    if (isResult) {
-      setExpression(digit);
-      setDisplayValue(digit);
-      setFirstOperand(parseFloat(digit));
-      setIsResult(false);
-      setWaitingForSecondOperand(false);
-      return;
-    }
-    
-    if (waitingForSecondOperand) {
-      setDisplayValue(digit);
-      setExpression(expression + digit);
-      setWaitingForSecondOperand(false);
-    } else {
-      setDisplayValue(displayValue === '0' ? digit : displayValue + digit);
-      setExpression(expression + digit);
-    }
-  };
-
-  const handleOperator = (nextOperator: string) => {
-    const inputValue = parseFloat(displayValue);
-
-    // Se a última ação foi um resultado, reinicia o cálculo com o resultado
-    if (isResult) {
-        setExpression(`${displayValue}${nextOperator}`);
-        setOperator(nextOperator);
-        setFirstOperand(inputValue);
-        setIsResult(false);
-        setWaitingForSecondOperand(true);
-        return;
-    }
-    
-    if (firstOperand === null) {
-      setFirstOperand(inputValue);
-      setExpression(expression + nextOperator);
-    } else if (operator) {
-      const result = performCalculation[operator as keyof typeof performCalculation](firstOperand, inputValue);
-      setDisplayValue(String(result));
-      setFirstOperand(result);
-      setExpression(`${result}${nextOperator}`);
-    } else {
-      setExpression(expression + nextOperator);
-      setFirstOperand(inputValue);
-    }
-
-    setWaitingForSecondOperand(true);
-    setOperator(nextOperator);
-  };
-
-  const performCalculation = {
-    '/': (first: number, second: number) => first / second,
-    '*': (first: number, second: number) => first * second,
-    '+': (first: number, second: number) => first + second,
-    '-': (first: number, second: number) => first - second,
-  };
-
-  const handleEquals = () => {
-    if (operator && firstOperand !== null) {
-      const secondOperand = parseFloat(displayValue);
-      const result = performCalculation[operator as keyof typeof performCalculation](firstOperand, secondOperand);
-      
-      const finalExpression = `${expression} = ${String(result)}`;
-      setExpression(finalExpression);
-      
-      setDisplayValue(String(result));
-      setFirstOperand(result); // O resultado se torna o primeiro operando para a próxima operação
-      setOperator(null);
-      setWaitingForSecondOperand(true);
-      setIsResult(true); // Indica que um resultado foi obtido
-    }
-  };
+  const handleClear = () => dispatch({ type: 'clear' });
+  const handleSignChange = () => dispatch({ type: 'change_sign' });
+  const handlePercentage = () => dispatch({ type: 'percentage' });
+  const handleDigit = (digit: string) => dispatch({ type: 'add_digit', payload: digit });
+  const handleOperator = (operator: string) => dispatch({ type: 'set_operator', payload: operator });
+  const handleEquals = () => dispatch({ type: 'calculate' });
 
   return (
     <div className="calculator">
-      <Display value={displayValue} expression={expression} />
+      <Display value={displayValue} expression={expression} errorMessage={errorMessage} />
       <div className="calculator-buttons">
-        <Button label="C" onClick={handleClear} className="clear-button" />
-        <Button label="/" onClick={handleOperator} className="operator-button" />
-        <Button label="7" onClick={handleDigit} />
-        <Button label="8" onClick={handleDigit} />
-        <Button label="9" onClick={handleDigit} />
-        <Button label="*" onClick={handleOperator} className="operator-button" />
-        <Button label="4" onClick={handleDigit} />
-        <Button label="5" onClick={handleDigit} />
-        <Button label="6" onClick={handleDigit} />
-        <Button label="-" onClick={handleOperator} className="operator-button" />
-        <Button label="1" onClick={handleDigit} />
-        <Button label="2" onClick={handleDigit} />
-        <Button label="3" onClick={handleDigit} />
-        <Button label="+" onClick={handleOperator} className="operator-button" />
-        <Button label="0" onClick={handleDigit} className="zero-button" />
-        <Button label="." onClick={handleDigit} />
+        <Button label="AC" onClick={handleClear} className="func-button" />
+        <Button label="±" onClick={handleSignChange} className="func-button" />
+        <Button label="%" onClick={handlePercentage} className="func-button" />
+        <Button label="÷" onClick={() => handleOperator('/')} className="operator-button" />
+
+        <Button label="7" onClick={() => handleDigit('7')} />
+        <Button label="8" onClick={() => handleDigit('8')} />
+        <Button label="9" onClick={() => handleDigit('9')} />
+        <Button label="×" onClick={() => handleOperator('*')} className="operator-button" />
+
+        <Button label="4" onClick={() => handleDigit('4')} />
+        <Button label="5" onClick={() => handleDigit('5')} />
+        <Button label="6" onClick={() => handleDigit('6')} />
+        <Button label="−" onClick={() => handleOperator('-')} className="operator-button" />
+        
+        <Button label="1" onClick={() => handleDigit('1')} />
+        <Button label="2" onClick={() => handleDigit('2')} />
+        <Button label="3" onClick={() => handleDigit('3')} />
+        <Button label="+" onClick={() => handleOperator('+')} className="operator-button" />
+        
+        <Button label="0" onClick={() => handleDigit('0')} className="zero-button" />
+        <Button label="." onClick={() => handleDigit('.')} />
         <Button label="=" onClick={handleEquals} className="equals-button" />
       </div>
     </div>

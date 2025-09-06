@@ -4,13 +4,21 @@ import './styles.css';
 interface DisplayProps {
   value: string;
   expression: string;
+  errorMessage: string | null; // Adiciona a nova prop
 }
 
-const Display: React.FC<DisplayProps> = ({ value, expression }) => {
+const Display: React.FC<DisplayProps> = ({ value, expression, errorMessage }) => {
   return (
     <div className="display-container">
-      <div className="display-expression">{expression}</div>
-      <div className="display-value">{value}</div>
+      {errorMessage ? (
+        // Se houver uma mensagem de erro, exibe-a no lugar da expressão e valor
+        <div className="display-error">{errorMessage}</div>
+      ) : (
+        <>
+          <div className="display-expression">{expression}</div>
+          <div className="display-value">{value}</div>
+        </>
+      )}
     </div>
   );
 };
