@@ -7,6 +7,13 @@
   border-top-right-radius: 10px;
 }
 
+.display-expression {
+  font-size: 1em;
+  color: #ccc;
+  font-family: 'Arial', sans-serif;
+  min-height: 20px;
+}
+
 .display-value {
   font-size: 2.5em;
   font-family: 'Arial', sans-serif;
